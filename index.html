@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es" data-profile="chico">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nuestra Lista de Películas y Series</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous" defer></script>
+</head>
+<body>
+  <div class="glass-bg"></div>
+
+  <!-- Header & Profile Selector -->
+  <header class="app-header glass-card">
+    <div class="logo">
+      <span class="logo-icon">🎬</span>
+      <h1>Cinema For Nikki &amp; Adri</h1>
+    </div>
+
+    <div class="profile-switcher">
+      <span class="switcher-label">Perfil actual:</span>
+      <div class="switcher-buttons">
+        <button id="btn-chico" class="profile-btn active" onclick="switchProfile('chico')">
+          <span class="avatar">👨‍💻</span>
+          <span class="name">Adriancin</span>
+        </button>
+        <button id="btn-chica" class="profile-btn" onclick="switchProfile('chica')">
+          <span class="avatar">👩‍🎨</span>
+          <span class="name">Nikki</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- Form SideBar -->
+    <aside class="sidebar glass-card">
+      <div class="sidebar-heading">
+        <h2 id="add-title-heading">Añadir Título</h2>
+        <button
+          id="toggle-add-form"
+          class="sidebar-toggle"
+          type="button"
+          aria-expanded="true"
+          aria-controls="add-form-panel"
+          onclick="toggleAddForm()"
+        >
+          <span id="add-form-toggle-label">Ocultar</span>
+          <span class="sidebar-toggle-icon" aria-hidden="true">⌃</span>
+        </button>
+      </div>
+      <div id="add-form-panel" class="add-form-panel">
+        <form id="movie-form" onsubmit="addMovie(event)">
+        <div class="form-group">
+          <label for="title">Título</label>
+          <input type="text" id="title" placeholder="Ej: Parasite, Goblin..." required>
+        </div>
+
+        <div class="form-group">
+          <label for="type">Categoría / Tipo</label>
+          <select id="type">
+            <option value="K-Drama">K-Drama</option>
+            <option value="Película">Película</option>
+            <option value="Serie">Serie</option>
+            <option value="Anime">Anime</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="genre">Género</label>
+          <input type="text" id="genre" placeholder="Terror, Animación, Romance, Aventura..." autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label for="rating">Calificación (1 a 5 ⭐)</label>
+          <select id="rating">
+            <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
+            <option value="4">⭐⭐⭐⭐ (4/5)</option>
+            <option value="3">⭐⭐⭐ (3/5)</option>
+            <option value="2">⭐⭐ (2/5)</option>
+            <option value="1">⭐ (1/5)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="status">Estado</label>
+          <select id="status">
+            <option value="Pendiente">Por ver</option>
+            <option value="En proceso">En proceso</option>
+            <option value="Finalizado">Finalizado</option>
+            <option value="Visto">Visto</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="poster-file">Carátula desde tu ordenador</label>
+          <input type="file" id="poster-file" class="visually-hidden" accept="image/*" onchange="handlePosterUpload(event)">
+          <label class="poster-upload" for="poster-file">
+            <span class="poster-upload-icon">🖼️</span>
+            <span class="poster-upload-copy">
+              <strong>Elegir una imagen</strong>
+              <span>JPG, PNG o WebP</span>
+            </span>
+            <span class="poster-upload-action">Examinar</span>
+          </label>
+          <div id="poster-preview" class="poster-preview" hidden>
+            <img id="poster-preview-image" alt="Vista previa de la carátula seleccionada">
+            <span id="poster-file-name"></span>
+            <button type="button" class="poster-remove-btn" aria-label="Quitar carátula" onclick="clearPosterFile()">✕</button>
+          </div>
+          <p id="poster-upload-message" class="poster-upload-message" aria-live="polite">La imagen se ajustará a la cuadrícula.</p>
+        </div>
+
+        <div class="form-group">
+          <label for="poster">O pega la URL del póster</label>
+          <input type="url" id="poster" placeholder="https://ejemplo.com/poster.jpg" oninput="clearPosterFile()">
+        </div>
+
+        <div class="form-group">
+          <label for="notes">Notas / Comentarios</label>
+          <textarea id="notes" rows="3" placeholder="¿Qué les pareció? ¿Vale la pena?"></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn">Guardar en la Lista</button>
+        </form>
+      </div>
+    </aside>
+
+    <!-- Content & Catalog -->
+    <section class="content-area">
+      <!-- Filter Bar -->
+      <div class="filter-bar glass-card">
+        <div class="search-box">
+          <input type="text" id="search-input" placeholder="🔍 Buscar por nombre o género..." oninput="filterMovies()">
+        </div>
+        <div class="filter-groups">
+          <div class="filter-group" aria-label="Filtrar por categoría">
+            <span class="filter-label">Categoría</span>
+            <div class="filter-options">
+              <button class="filter-chip active" data-category="all" aria-pressed="true" onclick="setFilter('all')">Todos</button>
+              <button class="filter-chip" data-category="K-Drama" aria-pressed="false" onclick="setFilter('K-Drama')">K-Dramas</button>
+              <button class="filter-chip" data-category="Serie" aria-pressed="false" onclick="setFilter('Serie')">Series</button>
+              <button class="filter-chip" data-category="Película" aria-pressed="false" onclick="setFilter('Película')">Películas</button>
+              <button class="filter-chip" data-category="Anime" aria-pressed="false" onclick="setFilter('Anime')">Anime</button>
+            </div>
+          </div>
+          <div class="filter-group" aria-label="Filtrar por género">
+            <span class="filter-label">Géneros populares</span>
+            <div class="filter-options">
+              <button class="filter-chip active" data-genre="all" aria-pressed="true" onclick="setGenreFilter('all')">Todos</button>
+              <button class="filter-chip" data-genre="terror" aria-pressed="false" onclick="setGenreFilter('terror')">Terror</button>
+              <button class="filter-chip" data-genre="animacion" aria-pressed="false" onclick="setGenreFilter('animacion')">Animación</button>
+              <button class="filter-chip" data-genre="romance" aria-pressed="false" onclick="setGenreFilter('romance')">Romance</button>
+              <button class="filter-chip" data-genre="aventura" aria-pressed="false" onclick="setGenreFilter('aventura')">Aventura</button>
+              <button class="filter-chip" data-genre="otros" aria-pressed="false" onclick="setGenreFilter('otros')">Otros</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid of Cards -->
+      <div id="movies-grid" class="movies-grid">
+        <!-- Generated dynamically via JS -->
+      </div>
+    </section>
+  </main>
+
+  <dialog id="edit-dialog" class="edit-dialog" aria-labelledby="edit-dialog-title">
+    <form id="edit-form" class="edit-form" onsubmit="updateMovie(event)">
+      <div class="edit-dialog-header">
+        <div>
+          <span class="edit-eyebrow">EDITAR EN CINESHARE</span>
+          <h2 id="edit-dialog-title">Editar título</h2>
+        </div>
+        <button type="button" class="edit-close-btn" aria-label="Cerrar editor" onclick="closeEditDialog()">✕</button>
+      </div>
+
+      <div class="edit-form-grid">
+        <div class="form-group">
+          <label for="edit-title">Título</label>
+          <input type="text" id="edit-title" required>
+        </div>
+        <div class="form-group">
+          <label for="edit-type">Categoría / Tipo</label>
+          <select id="edit-type">
+            <option value="K-Drama">K-Drama</option>
+            <option value="Película">Película</option>
+            <option value="Serie">Serie</option>
+            <option value="Anime">Anime</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="edit-genre">Género</label>
+          <input type="text" id="edit-genre" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="edit-rating">Calificación</label>
+          <select id="edit-rating">
+            <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
+            <option value="4">⭐⭐⭐⭐ (4/5)</option>
+            <option value="3">⭐⭐⭐ (3/5)</option>
+            <option value="2">⭐⭐ (2/5)</option>
+            <option value="1">⭐ (1/5)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="edit-status">Estado</label>
+          <select id="edit-status">
+            <option value="Pendiente">Por ver</option>
+            <option value="En proceso">En proceso</option>
+            <option value="Finalizado">Finalizado</option>
+            <option value="Visto">Visto</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group edit-poster-group">
+        <label for="edit-poster-file">Carátula</label>
+        <input type="file" id="edit-poster-file" class="visually-hidden" accept="image/*" onchange="handleEditPosterUpload(event)">
+        <label class="poster-upload edit-poster-upload" for="edit-poster-file">
+          <span class="poster-upload-icon">🖼️</span>
+          <span class="poster-upload-copy">
+            <strong>Elegir otra imagen</strong>
+            <span>JPG, PNG o WebP</span>
+          </span>
+          <span class="poster-upload-action">Examinar</span>
+        </label>
+        <input type="url" id="edit-poster-url" placeholder="O pega la URL del póster" oninput="clearEditPosterFile()">
+        <div id="edit-poster-preview" class="edit-poster-preview" hidden>
+          <img id="edit-poster-preview-image" alt="Vista previa de la carátula">
+          <span id="edit-poster-status"></span>
+          <button type="button" class="poster-remove-btn" aria-label="Quitar carátula" onclick="removeEditPoster()">✕</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="edit-notes">Notas / Comentarios</label>
+        <textarea id="edit-notes" rows="3"></textarea>
+      </div>
+
+      <div class="edit-actions">
+        <button type="button" class="edit-delete-btn" onclick="deleteEditingMovie()">Eliminar título</button>
+        <button type="button" class="edit-cancel-btn" onclick="closeEditDialog()">Cancelar</button>
+        <button type="submit" class="submit-btn">Guardar cambios</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="assets/js/script.js"></script>
+</body>
+</html>
