@@ -18,7 +18,7 @@ Podemos guardar lo que queremos ver, lo que está en proceso y lo que ya termina
 
 ## Hecho para nosotros
 
-Creado con cariño para **Nikki y Adri**: para compartir gustos, descubrir nuevas historias y recordar las que nos acompañarán siempre.
+Creado con cariño para **Nikki**: para compartir gustos, descubrir nuevas historias y recordar las que nos acompañarán siempre.
 
 <p align="center">╭────────────── ⋆｡°✩°｡⋆ ──────────────╮</p>
 <p align="center"><strong>Nuestras películas. Nuestras series. Nuestros recuerdos.</strong></p>
